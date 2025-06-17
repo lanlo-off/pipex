@@ -3,38 +3,64 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/16 18:51:16 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/17 15:29:05 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
+char	**split_path(char **envp)
+{
+	int		i;
+	int		j;
+	char	*sub;
+	char	**paths;
+
+	i = 0;
+	while (envp[i])
+	{
+		j = 0;
+		while (envp[i][j] && envp[i][j] != '=')
+			j++;
+		sub = ft_substr(envp[i], 0, j);
+		if (ft_strncmp(sub, "PATH", 5) == 0)
+		{
+			free(sub);
+			paths = ft_split(envp[i] + j + 1, ':');
+			return (paths);
+		}
+		free(sub);
+		i++;
+	}
+	return (NULL);
+}
+
 char	*get_path(char *cmd, char **envp)
 {
 	int		i;
-	char	**split_path;
+	char	**all_path;
 	char	*tmp_path;
 	char	*full_path;
 
+	all_path = split_path(envp);
 	i = 0;
-	/*Reprendre ici car ca marche pas ca*/while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
-		i++;
-	split_path = ft_split(envp[i] + 5, ":");//+5 pour depasser le $PATH dont on ne veut pas
-	i = 0;
-	while (split_path[i])
+	while (all_path[i])
 	{
-		tmp_path = ft_strjoin(split_path[i], "/");
+		tmp_path = ft_strjoin(all_path[i], "/");
 		full_path = ft_strjoin(tmp_path, cmd);
 		free(tmp_path);
-		if (access(full_path, X_OK | R_OK))
+		if (access(full_path, F_OK | X_OK) == 0)//Masque | car en binaire : F_OK correspond a 0000 alors que X_OK = 0001 donc si on fait & ca sera toujours faux
+		{
+			free_tab(all_path);
 			return (full_path);
+		}
 		free(full_path);
 		i++;
 	}
-	free_tab(split_path);
+	free_tab(all_path);
 	return (cmd);
 }
 

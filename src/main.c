@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:23:30 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/16 17:13:23 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/17 17:31:36 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,20 @@ int	main(int ac, char **av, char **envp)
 	}
 	if (pipe(pipefd) == -1)
 		return (ft_putstr_fd("Could not create pipe!\n", 2), -1);
+	printf("MAIN || PID: %d, Parent PID: %d\n", getpid(), getppid());//a suppr
 	pid = fork();
 	if (pid == -1)
 		return (ft_putstr_fd("Could not fork!\n", 2), -1);
-	else if (pid == 0)
+	else if (pid == 0)//on fait la cmd 1
+	{
+		ft_putstr_fd("Entering child process\n", 2);//a suppr
 		do_child(pipefd, av, envp);
-	else if (pid > 0)
+	}
+	else if (pid > 0)//on fait la cmd 2
+	{
+		ft_putstr_fd("Entering parent process\n", 2);//a suppr
 		do_parent(pipefd, av, envp);
+	}
 	close(pipefd[0]);
 	close(pipefd[1]);
 	return (0);

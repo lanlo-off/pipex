@@ -14,24 +14,42 @@ int	main(int ac, char **av, char **envp)
 	// printf("%d\n", execve("ls", args, envp));//KO
 
 
-	int		i;
+	int		i = 0;
 	int		j = 0;
 	char	**split_path;
 	char	*tmp_path;
 	char	*full_path;
 
-	i = 0;
-	while (envp[i][j])
+	while (envp[i][j] && envp[i][j] != '=')
 	{
-		while (envp[i][j])
-		{
-			write(1, &envp[i][j], 1);
-			j++;
-		}
-		i++;
-		j = 0;
+	write(1, &envp[i][j], 1);
+	j++;
 	}
-
+	write(1, "\n", 1);
+	i++;
+	j = 0;
+	while (envp[i][j] && envp[i][j] != '=')
+	{
+	write(1, &envp[i][j], 1);
+	j++;
+	}
+	write(1, "\n", 1);
+	i++;
+	j = 0;
+	while (envp[i][j] && envp[i][j] != '=')
+	{
+	write(1, &envp[i][j], 1);
+	j++;
+	}
+	write(1, "\n", 1);
+	j = 0;
+	i++;
+	while (envp[i][j] && envp[i][j] != '=')
+	{
+	write(1, &envp[i][j], 1);
+	j++;
+	}
+	write(1, "\n", 1);
 	// i = 0;
 	// while (envp[i] && ft_strncmp(envp[i], "$PATH", 5) != 0)
 	// 	i++;
@@ -42,5 +60,6 @@ int	main(int ac, char **av, char **envp)
 	// 	printf("%s\n", split_path[i]);
 	// 	i++;
 	// }
+
 	return (0);
 }
