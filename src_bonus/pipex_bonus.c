@@ -1,16 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 16:51:29 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 17:23:29 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
+
+void	first_cmd(char **av, char **envp, int *pipefd, int i)
+{
+	int	pid;
+
+	if (pipe(pipefd) == -1)
+		return (ft_putstr_fd("Could not create pipe!\n", 2), -1);
+	pid = fork();
+	if (pid == -1)
+		return (ft_putstr_fd("Could not fork!\n", 2), -1);
+	else if (pid == 0)//on fait la cmd 1
+	{
+		ft_putstr_fd("Entering child process\n", 2);//a suppr
+		do_child(pipefd, av, envp);
+	}
+	else if (pid > 0)//on part sur la suite
+	{
+		
+	}
+}
 
 void	do_child(int *pipefd, char **av, char **envp)
 {
@@ -64,15 +84,7 @@ void	exec_cmd(char *cmd, char **envp)
 		ft_putstr_fd("Command empty: ", 2);
 		exit(-1);
 	}
-	path = get_path(cmd_split[0], envp);
-	if (path == NULL)
-	{
-		ft_putstr_fd("path not found: ", 2);
-		ft_putendl_fd(cmd_split[0], 2);
-		free_tab(cmd_split);
-		free(path);
-		exit(0);
-	}
+	path = get_path(cmd_split[0], envp);//
 	if (execve(path, cmd_split, envp) == -1)//si la commande n'existe pas
 	{
 		ft_putstr_fd("Command not found: ", 2);

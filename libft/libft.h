@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 17:17:20 by llechert          #+#    #+#             */
-/*   Updated: 2025/04/24 17:07:50 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:47:47 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 # include <stdlib.h>
 # include <stddef.h>
 # include <unistd.h>
+# include "ftprintf/ft_printf.h"
+# include <fcntl.h>
 
 int		ft_atoi(const char *str);
 void	ft_bzero(void *s, size_t n);
@@ -66,5 +68,19 @@ t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 t_list	*ft_lstnew(void *content);
 int		ft_lstsize(t_list *lst);
+
+/*Others*/
+void	free_tab(char **tab);
+int		ft_strcmp(char *s1, char *s2);
+
+/*GNL*/
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 4096
+# endif
+char	*get_next_line(int fd);
+void	add_new_element(t_list	**list, char *buf);
+int		find_newline(t_list *list);
+int		ft_len_needed(t_list **list);
+void	prepare_list(t_list **list, char *rest);
 
 #endif

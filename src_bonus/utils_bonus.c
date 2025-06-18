@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 16:39:56 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 10:00:38 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp_path;
 	char	*full_path;
 
-	if (*cmd == '/')
-	
 	all_path = split_path(envp);
 	i = 0;
 	while (all_path[i])
@@ -81,4 +79,17 @@ int	open_file(char *file, char *in_out)
 		exit(-1);//voir si on ne doit pas close et/ou free certains trucs avant d'exit ici
 	}
 	return (fd);
+}
+
+void	free_tab(char **tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
 }
