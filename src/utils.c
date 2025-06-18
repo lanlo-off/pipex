@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/17 15:29:05 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 10:00:38 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,11 @@ int	open_file(char *file, char *in_out)
 {
 	int	fd;
 
+	fd = -1;
 	if (ft_strncmp(in_out, "in", 3) == 0)
 		fd = open(file, O_RDONLY);
 	else if (ft_strncmp(in_out, "out", 4) == 0)
-		fd = open(file, O_WRONLY);
+		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd < 0)
 	{
 		ft_putstr_fd("Could not open one of the files!\n", 2);

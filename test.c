@@ -12,54 +12,12 @@ int	main(int ac, char **av, char **envp)
 	// printf("%d\n", execve("/bin", args, envp));//KO
 	// printf("%d\n", execve("/bin/ls", args2, envp));//ls renvoie qu'il connait pas brvm
 	// printf("%d\n", execve("ls", args, envp));//KO
+	int fd = 0;
 
-
-	int		i = 0;
-	int		j = 0;
-	char	**split_path;
-	char	*tmp_path;
-	char	*full_path;
-
-	while (envp[i][j] && envp[i][j] != '=')
-	{
-	write(1, &envp[i][j], 1);
-	j++;
-	}
-	write(1, "\n", 1);
-	i++;
-	j = 0;
-	while (envp[i][j] && envp[i][j] != '=')
-	{
-	write(1, &envp[i][j], 1);
-	j++;
-	}
-	write(1, "\n", 1);
-	i++;
-	j = 0;
-	while (envp[i][j] && envp[i][j] != '=')
-	{
-	write(1, &envp[i][j], 1);
-	j++;
-	}
-	write(1, "\n", 1);
-	j = 0;
-	i++;
-	while (envp[i][j] && envp[i][j] != '=')
-	{
-	write(1, &envp[i][j], 1);
-	j++;
-	}
-	write(1, "\n", 1);
-	// i = 0;
-	// while (envp[i] && ft_strncmp(envp[i], "$PATH", 5) != 0)
-	// 	i++;
-	// split_path = ft_split(envp[i] + 5, ':');//+5 pour depasser le $PATH dont on ne veut pas
-	// i = 0;
-	// while (split_path[i])
-	// {
-	// 	printf("%s\n", split_path[i]);
-	// 	i++;
-	// }
+	fd = open("infile.txt", O_RDONLY);
+	// close(fd);
+	// close(fd);
+	// close(fd);
 
 	return (0);
 }

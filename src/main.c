@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:23:30 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/17 17:31:36 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 12:03:01 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	main(int ac, char **av, char **envp)
 		ft_putstr_fd("Entering parent process\n", 2);//a suppr
 		do_parent(pipefd, av, envp);
 	}
+	printf("dfdfdfdfd: %d\n", pipefd[0]);
 	close(pipefd[0]);
 	close(pipefd[1]);
 	return (0);
