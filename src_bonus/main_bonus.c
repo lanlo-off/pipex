@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:23:30 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 17:19:30 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 17:53:23 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,17 @@ int	main(int ac, char **av, char **envp)
 	while (i < ac)//toutes les iterations entre la premiere et la derniere
 	{
 		if ((i - here_doc) % 2 == 0)
-			do_something(av, envp, pipefd, i);
+			do_child(av, envp, pipefd, i);//renew le pipefd[1] ??
 		else
-			do_something_else(av, envp, pipefd, i);
+			do_something_else(av, envp, pipefd, i);//pareil mais renew pipefd[0] ??
 		i++;
 	}
-	last_cmd(av, envp, pipefd);
+	if (last_cmd(av, envp, pipefd[i % 2], ac) == -1)//dernier enfant, voir si on prend pipefd[0] ou pipefd[1] selon i % 2 et here doc
+		return (-1);// on peut gaire un exit -1 si fail et exit 0 si success dans last_cmd a la place pour gagner 2 lignes
 	return (0);
 }
 
 int	is_here_doc(char *str)
 {
-	return (1 - ft_strcmp(str, "here_doc"));
+	return (ft_strcmp(str, "here_doc") == 0);
 }
