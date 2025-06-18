@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 16:27:14 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/05 16:25:10 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:26:14 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 char	*ft_strnstr(const char *str, const char *to_find, size_t n)
 {

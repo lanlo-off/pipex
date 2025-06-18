@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 11:13:17 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/06 10:35:15 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:24:14 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 void	ft_bzero(void *s, size_t n)
 {

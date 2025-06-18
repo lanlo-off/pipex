@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 13:19:23 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/16 18:00:38 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:25:54 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {

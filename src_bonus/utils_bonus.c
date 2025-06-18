@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 10:00:38 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:35:48 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/pipex_bonus.h"
 
 char	**split_path(char **envp)
 {
@@ -64,7 +64,7 @@ char	*get_path(char *cmd, char **envp)
 	return (cmd);
 }
 
-int	open_file(char *file, char *in_out)
+int	open_file(char *file, char *in_out, int	here_doc)
 {
 	int	fd;
 
@@ -72,7 +72,12 @@ int	open_file(char *file, char *in_out)
 	if (ft_strncmp(in_out, "in", 3) == 0)
 		fd = open(file, O_RDONLY);
 	else if (ft_strncmp(in_out, "out", 4) == 0)
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	{
+		if (here_doc == 0)
+			fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		else if (here_doc == 1)
+			fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
+	}
 	if (fd < 0)
 	{
 		ft_putstr_fd("Could not open one of the files!\n", 2);
@@ -81,15 +86,24 @@ int	open_file(char *file, char *in_out)
 	return (fd);
 }
 
-void	free_tab(char **tab)
+void	exec_cmd(char *cmd, char **envp)
 {
-	int	i;
-
-	i = 0;
-	while (tab[i])
+	char	**cmd_split;
+	char	*path;
+	
+	cmd_split = ft_split(cmd, ' ');//on separe la commande des options eventuelles
+	if (cmd_split == NULL)
 	{
-		free(tab[i]);
-		i++;
+		ft_putstr_fd("Command empty: ", 2);
+		exit(-1);
 	}
-	free(tab);
+	path = get_path(cmd_split[0], envp);//
+	if (execve(path, cmd_split, envp) == -1)//si la commande n'existe pas
+	{
+		ft_putstr_fd("Command not found: ", 2);
+		ft_putendl_fd(cmd_split[0], 2);
+		free_tab(cmd_split);
+		free(path);
+		exit(0);
+	}
 }

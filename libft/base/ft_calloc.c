@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 16:26:41 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/06 10:29:53 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:24:17 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {

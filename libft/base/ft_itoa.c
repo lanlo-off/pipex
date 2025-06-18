@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 13:18:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/06 11:23:50 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:24:33 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 static int	ft_int_len(long nb)
 {

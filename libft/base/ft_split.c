@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 13:18:45 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/06 11:21:12 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:25:43 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 static int	ft_word_len(int index, char const *s, char c)
 {

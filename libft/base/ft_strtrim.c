@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 13:19:41 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/06 11:23:50 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:26:21 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 static int	ft_is_in_set(char c, char const *set)
 {

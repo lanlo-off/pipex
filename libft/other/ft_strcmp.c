@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 16:27:09 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 16:47:51 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:26:54 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 int	ft_strcmp(char *s1, char *s2)
 {

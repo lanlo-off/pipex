@@ -6,11 +6,11 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 17:07:35 by llechert          #+#    #+#             */
-/*   Updated: 2025/05/05 14:57:18 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:24:35 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
 void	ft_lstadd_back(t_list **lst, t_list *new)
 {
