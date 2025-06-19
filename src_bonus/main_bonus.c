@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 11:23:30 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 21:41:43 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/19 05:34:10 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,21 @@ int	main(int ac, char **av, char **envp)
 	return (0);
 }
 
-void	wait_children(int i, int here_doc)
-{
-	int	j;
+// void	wait_children(int i, int here_doc)
+// {
+// 	int	j;
 
-	j = 0;
-	(void)i;
-	(void)here_doc;
-	// while (j < i - here_doc)
-	// {
-	// 	wait(NULL);
-	// 	j++;
-	// }
-	wait(NULL);
-}
+// 	j = 0;
+// 	(void)i;
+// 	(void)here_doc;
+// 	(void)j;
+// 	// while (j < i - here_doc)
+// 	// {
+// 	// 	wait(NULL);
+// 	// 	j++;
+// 	// }
+// 	wait(NULL);
+// }
 
 int	is_here_doc(char *str)
 {
