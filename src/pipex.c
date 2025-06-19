@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/19 14:46:58 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:51:30 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,11 @@ void	exec_cmd(char *cmd, char **envp)
 		ft_printf("path not found: %s\n", cmd_split[0]);
 		free_tab(cmd_split);
 		free(path);
+		return ;
 	}
-	else if (execve(path, cmd_split, envp) == -1)//si la commande n'existe pas
-	{
-		ft_printf("command not found: %s\n", cmd_split[0]);
-		free_tab(cmd_split);
-		free(path);
-	}
+	if (fd)
+	execve(path, cmd_split, envp);//si la commande fonctionne ca stoppe tout
+	ft_printf("command not found: %s\n", cmd_split[0]);
+	free_tab(cmd_split);
+	free(path);
 }

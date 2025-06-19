@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/19 11:10:13 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/19 15:46:47 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,11 +80,13 @@ int	open_file(char *file, char *in_out, int	here_doc)
 		else if (here_doc == 1)
 			fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	}
-	if (fd < 0)
+	if (fd < 0 && ft_strncmp(in_out, "in", 3) == 0)
 	{
-		ft_putstr_fd("Could not open one of the files!\n", 2);
-		exit(-1);//A priori faudrait pas exit mais juste return
+		ft_putstr_fd("Could not read infile!\n", 2);
+		exit(EXIT_FAILURE);
 	}
+	if (fd < 0 && ft_strncmp(in_out, "out", 4) == 0)
+		ft_putstr_fd("Could not open outfile!\n", 2);
 	return (fd);
 }
 
