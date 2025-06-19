@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 16:39:56 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/19 11:10:13 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp_path;
 	char	*full_path;
 
-	if (*cmd == '/')
+	// if (*cmd == '/')
 	
 	all_path = split_path(envp);
 	i = 0;
@@ -66,7 +66,7 @@ char	*get_path(char *cmd, char **envp)
 	return (cmd);
 }
 
-int	open_file(char *file, char *in_out)
+int	open_file(char *file, char *in_out, int	here_doc)
 {
 	int	fd;
 
@@ -74,11 +74,26 @@ int	open_file(char *file, char *in_out)
 	if (ft_strncmp(in_out, "in", 3) == 0)
 		fd = open(file, O_RDONLY);
 	else if (ft_strncmp(in_out, "out", 4) == 0)
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	{
+		if (here_doc == 0)
+			fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		else if (here_doc == 1)
+			fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
+	}
 	if (fd < 0)
 	{
 		ft_putstr_fd("Could not open one of the files!\n", 2);
-		exit(-1);//voir si on ne doit pas close et/ou free certains trucs avant d'exit ici
+		exit(-1);//A priori faudrait pas exit mais juste return
 	}
 	return (fd);
+}
+
+void	close_fds(int fd_in, int fd_out)
+{
+	if (fd_in > 0 && fd_in != STDIN_FILENO && fd_in != STDOUT_FILENO
+		&& fd_in != STDERR_FILENO)
+		close(fd_in);
+	if (fd_out > 0 && fd_out != STDIN_FILENO && fd_out != STDOUT_FILENO
+		&& fd_out != STDERR_FILENO)
+		close(fd_out);
 }

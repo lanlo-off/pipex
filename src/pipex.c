@@ -6,51 +6,97 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 16:51:29 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:46:58 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-void	do_child(int *pipefd, char **av, char **envp)
+int	do_first_cmd(char **av, char **envp, int i, int fd_in)
 {
-	int	fd;
+	int		pipefd[2];
+	pid_t	pid;
 
-	printf("CHILD || PID: %d, Parent PID: %d\n", getpid(), getppid());//a suppr
-	fd = open_file(av[1], "in");
-	dup2(fd, 0);//on lit depuis infile
-	dup2(pipefd[1], 1);//on ecrit sur la sortie du pipe ==> comme ca le process parent pourra lire ce qui vient du pipe
-	close(pipefd[0]);//on ferme le cote lecture du pipe
-	// close(pipefd[1]);
-	// close(fd);
-	exec_cmd(av[2], envp);
-}
-
-void	do_parent(int *pipefd, char **av, char **envp)
-{
-	int	fd;
-	int	pid;
-
-	printf("PARENT || PID: %d, Parent PID: %d\n", getpid(), getppid());//a suppr
+	if (pipe(pipefd) == -1)
+		return (ft_putstr_fd("Could not create pipe!\n", 2), -1);
 	pid = fork();
-	if (pid == 0)
+	if (pid == -1)
+		return (ft_putstr_fd("Could not fork!\n", 2), -1);
+	else if (pid == 0)
 	{
-		fd = open_file(av[4], "out");
-		dup2(pipefd[0], 0);//on lit depuis le pipe
-		close(pipefd[1]);//on ferme la sortie du pipe (la ou on ecrit)
-		dup2(fd, 1);//on ecrit sur l'outfile ==> comme ca le process parent pourra ecrire dans l'outfile
-		// close(pipefd[0]);
-		// close(fd);
-		exec_cmd(av[3], envp);
+		ft_printf("first child [%d] || fd : %d\n", i, pipefd[1]);
+		dup2(fd_in, STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		exec_cmd(av[i], envp);
 	}
 	else
 	{
-		// wait(NULL);
-		// wait(NULL);
-		// close(pipefd[0]);
-		// close(pipefd[0]);
-		// close(pipefd[1]);
+		ft_printf("process first parent [%d] || fd : %d\n", i, pipefd[0]);
+		dup2(pipefd[0], STDOUT_FILENO);
+		close(pipefd[1]);
 	}
+	return (pipefd[0]);
+}
+
+int	process_child(char **av, char **envp, int i, int fd_in)
+{
+	int		pipefd[2];
+	pid_t	pid;
+
+	if (pipe(pipefd) == -1)
+		return (ft_putstr_fd("Could not create pipe!\n", 2), -1);
+	pid = fork();
+	if (pid == -1)
+		return (ft_putstr_fd("Could not fork!\n", 2), -1);
+	else if (pid == 0)
+	{
+		ft_printf("process child [%d] || fd : %d\n", i, pipefd[1]);
+		dup2(fd_in, STDIN_FILENO);
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		exec_cmd(av[i], envp);
+	}
+	else
+	{
+		ft_printf("process parent [%d] || fd : %d\n", i, pipefd[0]);
+		// dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[1]);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+	}
+	return (pipefd[0]);
+}
+
+int	do_last_cmd(int ac, char **av, char **envp, int fd_in, int fd_out)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+		return (ft_putstr_fd("Could not fork!\n", 2), -1);
+	else if (pid == 0)//lorsque la premiere commande arrive ici on a encore le dup2(fd_in, 0) du main donc ok
+	{
+		ft_printf("last process [%d] || fd : %d\n", ac - 2, fd_out);
+		dup2(fd_in, STDIN_FILENO);
+		dup2(fd_out, STDOUT_FILENO);
+		if (fd_in != STDIN_FILENO)
+			close(fd_in);
+		if (fd_out != STDOUT_FILENO)
+			close(fd_out);
+		exec_cmd(av[ac - 2], envp);
+	}
+	if (fd_in != STDIN_FILENO)
+		close(fd_in);
+	if (fd_out != STDOUT_FILENO)
+		close(fd_out);
+	return (0);
 }
 
 void	exec_cmd(char *cmd, char **envp)
@@ -62,23 +108,19 @@ void	exec_cmd(char *cmd, char **envp)
 	if (cmd_split == NULL)
 	{
 		ft_putstr_fd("Command empty: ", 2);
-		exit(-1);
+		return ;
 	}
 	path = get_path(cmd_split[0], envp);
 	if (path == NULL)
 	{
-		ft_putstr_fd("path not found: ", 2);
-		ft_putendl_fd(cmd_split[0], 2);
+		ft_printf("path not found: %s\n", cmd_split[0]);
 		free_tab(cmd_split);
 		free(path);
-		exit(0);
 	}
-	if (execve(path, cmd_split, envp) == -1)//si la commande n'existe pas
+	else if (execve(path, cmd_split, envp) == -1)//si la commande n'existe pas
 	{
-		ft_putstr_fd("Command not found: ", 2);
-		ft_putendl_fd(cmd_split[0], 2);
+		ft_printf("command not found: %s\n", cmd_split[0]);
 		free_tab(cmd_split);
 		free(path);
-		exit(0);
 	}
 }

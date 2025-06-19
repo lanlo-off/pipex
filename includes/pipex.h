@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:31:58 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 19:35:20 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:57:28 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,21 @@
 # include <fcntl.h>  
 # include <stdlib.h>
 
+/*main.c*/
+int		is_here_doc(char *str);
+void	wait_children(int nb_cmd);
+
+
 /*pipex.c*/
-void	do_child(int *pipefd, char **av, char **envp);
-void	do_parent(int *pipefd, char **av, char **envp);
-void	exec_cmd(char *cmd, char **envp);
+int		do_first_cmd(char **av, char **envp, int i, int fd_in);
+int		do_last_cmd(int ac, char **av, char **envp, int fd_in, int fd_out);
+int		process_child(char **av, char **envp, int i, int fd_in);
 
 /*utils.c*/
 char	**split_path(char **envp);
 char	*get_path(char *cmd, char **envp);
-int		open_file(char *file, char *in_out);
-void	free_tab(char **tab);
+int		open_file(char *file, char *in_out, int here_doc);
+void	exec_cmd(char *cmd, char **envp);
+void	close_fds(int fd_in, int fd_out);
 
 #endif
