@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/19 15:51:30 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/20 11:51:29 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	process_child(char **av, char **envp, int i, int fd_in)
 	return (pipefd[0]);
 }
 
-int	do_last_cmd(int ac, char **av, char **envp, int fd_in, int fd_out)
+int	do_last_cmd(char *cmd, char **envp, int fd_in, int fd_out)
 {
 	pid_t	pid;
 
@@ -83,14 +83,14 @@ int	do_last_cmd(int ac, char **av, char **envp, int fd_in, int fd_out)
 		return (ft_putstr_fd("Could not fork!\n", 2), -1);
 	else if (pid == 0)//lorsque la premiere commande arrive ici on a encore le dup2(fd_in, 0) du main donc ok
 	{
-		ft_printf("last process [%d] || fd : %d\n", ac - 2, fd_out);
+		ft_printf("last process || fd : %d\n", fd_out);
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);
 		if (fd_in != STDIN_FILENO)
 			close(fd_in);
 		if (fd_out != STDOUT_FILENO)
 			close(fd_out);
-		exec_cmd(av[ac - 2], envp);
+		exec_cmd(cmd, envp);
 	}
 	if (fd_in != STDIN_FILENO)
 		close(fd_in);
@@ -118,7 +118,6 @@ void	exec_cmd(char *cmd, char **envp)
 		free(path);
 		return ;
 	}
-	if (fd)
 	execve(path, cmd_split, envp);//si la commande fonctionne ca stoppe tout
 	ft_printf("command not found: %s\n", cmd_split[0]);
 	free_tab(cmd_split);
