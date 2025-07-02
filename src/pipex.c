@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/20 11:51:29 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:02:39 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ int	do_first_cmd(char **av, char **envp, int i, int fd_in)
 		return (ft_putstr_fd("Could not fork!\n", 2), -1);
 	else if (pid == 0)
 	{
-		ft_printf("first child [%d] || fd : %d\n", i, pipefd[1]);
 		dup2(fd_in, STDIN_FILENO);
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
@@ -35,7 +34,6 @@ int	do_first_cmd(char **av, char **envp, int i, int fd_in)
 	}
 	else
 	{
-		ft_printf("process first parent [%d] || fd : %d\n", i, pipefd[0]);
 		dup2(pipefd[0], STDOUT_FILENO);
 		close(pipefd[1]);
 	}
@@ -54,7 +52,6 @@ int	process_child(char **av, char **envp, int i, int fd_in)
 		return (ft_putstr_fd("Could not fork!\n", 2), -1);
 	else if (pid == 0)
 	{
-		ft_printf("process child [%d] || fd : %d\n", i, pipefd[1]);
 		dup2(fd_in, STDIN_FILENO);
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
@@ -65,7 +62,6 @@ int	process_child(char **av, char **envp, int i, int fd_in)
 	}
 	else
 	{
-		ft_printf("process parent [%d] || fd : %d\n", i, pipefd[0]);
 		// dup2(pipefd[0], STDIN_FILENO);
 		close(pipefd[1]);
 		if (fd_in != STDIN_FILENO)
@@ -81,9 +77,8 @@ int	do_last_cmd(char *cmd, char **envp, int fd_in, int fd_out)
 	pid = fork();
 	if (pid == -1)
 		return (ft_putstr_fd("Could not fork!\n", 2), -1);
-	else if (pid == 0)//lorsque la premiere commande arrive ici on a encore le dup2(fd_in, 0) du main donc ok
+	else if (pid == 0)
 	{
-		ft_printf("last process || fd : %d\n", fd_out);
 		dup2(fd_in, STDIN_FILENO);
 		dup2(fd_out, STDOUT_FILENO);
 		if (fd_in != STDIN_FILENO)
@@ -106,20 +101,23 @@ void	exec_cmd(char *cmd, char **envp)
 
 	cmd_split = ft_split(cmd, ' ');//on separe la commande des options eventuelles
 	if (cmd_split == NULL)
+		return(ft_putstr_fd("Command empty: ", 2));
+	if (ft_strchr(cmd_split[0], '/') == NULL)
 	{
-		ft_putstr_fd("Command empty: ", 2);
-		return ;
+		path = get_path(cmd_split[0], envp);
+		if (path == NULL)
+		{
+			ft_putstr_fd("path not found: ", 2);
+			ft_putendl_fd(cmd_split[0], 2);
+			return (free_tab(cmd_split));
+		}
 	}
-	path = get_path(cmd_split[0], envp);
-	if (path == NULL)
-	{
-		ft_printf("path not found: %s\n", cmd_split[0]);
-		free_tab(cmd_split);
-		free(path);
-		return ;
-	}
+	else
+		path = cmd_split[0];
 	execve(path, cmd_split, envp);//si la commande fonctionne ca stoppe tout
-	ft_printf("command not found: %s\n", cmd_split[0]);
+	ft_putstr_fd("command not found: ", 2);
+	ft_putendl_fd(cmd_split[0], 2);
+	if (ft_strchr(cmd_split[0], '/') == NULL && path != cmd_split[0])
+		free(path);
 	free_tab(cmd_split);
-	free(path);
 }

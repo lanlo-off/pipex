@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/19 15:46:47 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:03:05 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ char	*get_path(char *cmd, char **envp)
 	char	*tmp_path;
 	char	*full_path;
 
-	// if (*cmd == '/')
-	
 	all_path = split_path(envp);
 	i = 0;
 	while (all_path[i])
@@ -72,7 +70,12 @@ int	open_file(char *file, char *in_out, int	here_doc)
 
 	fd = -1;
 	if (ft_strncmp(in_out, "in", 3) == 0)
-		fd = open(file, O_RDONLY);
+	{
+		if (here_doc == 1)
+			return (0);
+		else
+			fd = open(file, O_RDONLY);
+	}
 	else if (ft_strncmp(in_out, "out", 4) == 0)
 	{
 		if (here_doc == 0)
