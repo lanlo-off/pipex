@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 17:17:20 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 11:09:15 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:06:24 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ t_list	*ft_lstnew(void *content);
 int		ft_lstsize(t_list *lst);
 
 /*Others*/
-void	free_tab(char **tab);
+void	free_tab_str(char **tab);
 int		ft_strcmp(char *s1, char *s2);
 
 /*GNL*/

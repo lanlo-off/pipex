@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:27 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 09:23:18 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/03 14:22:46 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	process_child(char **av, char **envp, int i, int fd_in)
 	else
 	{
 		// dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[1]);
+		close(pipefd[1]);//on est dans le parent donc on ne fait que lire pas ecrire
 		if (fd_in != STDIN_FILENO)
 			close(fd_in);
 	}

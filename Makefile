@@ -1,6 +1,7 @@
 SRCS = src/main.c\
 	src/pipex.c\
-	src/utils.c
+	src/utils.c\
+	src/files_free.c
 
 OBJS := $(SRCS:.c=.o)
 
@@ -26,7 +27,8 @@ CFLAGS = -Wall -Wextra -Werror -g3
 
 TEST_FILES = test.c\
 	src/pipex.c\
-	src/utils.c
+	src/utils.c\
+	src/files_free.c
 
 TEST_NAME = pipex_test
 

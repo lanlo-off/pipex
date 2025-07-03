@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 09:23:44 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 11:23:24 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:12:49 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	main(int argc, char **argv, char **envp)
 {
 	t_args	*args;
-	t_cmd	**tab_cmds;
+	t_cmd	*tab_cmds;
 	
 	if (argc < 5)
 		return (ft_putstr_fd("Not enough arguments!\n", 1), 0);
@@ -26,6 +26,12 @@ int	main(int argc, char **argv, char **envp)
 	tab_cmds = init_cmds(args);
 	if (!tab_cmds)
 		return (1);
+	pipex(tab_cmds, args);
+	close_fds(tab_cmds[0].fd_in, tab_cmds[args->nb_cmd - 1].fd_out);
+	wait_children(tab_cmds, args->nb_cmd);
+	free_cmds(tab_cmds, args->nb_cmd);
+	free(args);
+	return (0);
 }
 
 void	fill_args(t_args *args, int argc, char **argv, char **envp)
@@ -36,72 +42,62 @@ void	fill_args(t_args *args, int argc, char **argv, char **envp)
 	args->env = envp;
 }
 
-t_cmd	**init_cmds(t_args *args)
+t_cmd	*init_cmds(t_args *args)
 {
-	t_cmd	**tab_cmds;
-	t_cmd	*tmp;
+	t_cmd	*tab_cmds;
 	int		i;
 
 	i = 0;
 	tab_cmds = ft_calloc(args->nb_cmd ,sizeof(t_cmd));
 	if (!tab_cmds)
 		return (NULL);
-	(*tab_cmds) = fill_cmd(tab_cmds, *tab_cmds, args, i);
 	while (i < args->nb_cmd)
 	{
-		tmp = *tab_cmds;
+		tab_cmds[i] = fill_cmd(tab_cmds, args, i);
 		i++;
 	}
+	return(tab_cmds);
 }
 
-t_cmd	*fill_cmd(t_cmd **tab_cmds, t_args *args, int i)
+t_cmd	fill_cmd(t_cmd *tab_cmds, t_args *args, int i)
 {
-	t_cmd	*new;
+	t_cmd	new;
 
-	new->cmd_nb = i;
-	new->cmd = args->av[i + 2 + args->heredoc];
-	new->cmd_split = ft_split(new->cmd, ' ');
-	new->path = get_path(new->cmd_split[0], args->env);
-	if (!new->cmd_nb && !(args->heredoc))
-		new->fd_in = open_file(args->av[1], "in", args->heredoc);
-	else if (!new->cmd_nb)//sous entendu on a here doc et on est a la premiere cmd
-		new->fd_in = 0;//a voir
+	new.cmd_nb = i;
+	new.cmd = args->av[i + 2 + args->heredoc];
+	new.cmd_split = ft_split(new.cmd, ' ');
+	if (ft_strchr(new.cmd_split[0], '/') == NULL)
+		new.path = get_path(new.cmd_split[0], args->env);
 	else
-		new->fd_in = -1;//jsp si ca sera disponible au moment ou on appelle la fonction donc = -1 pour l'initialisation
-	if (i == args->nb_cmd)
-		new->fd_out = open_file(args->av[args->nb_cmd + 2 + args->heredoc], "out", args->heredoc);
-	else
-		new->fd_out = -1;
-	new->pid = -1;
-	new->exit_status = -1;
-	ft_lstadd_back(tab_cmds, new);
+		new.path = new.cmd_split[0];
+	new.fd_in = 0;
+	new.fd_out = 0;
+	if (!i)//premiere cmd
+		new.fd_in = open_infile(args->av[1], args->heredoc);
+	// else if (i == args->nb_cmd - 1)//derniere cmd
+	// 	new.fd_out = open_outfile(args->av[args->nb_cmd + 2 + args->heredoc], args->heredoc);
+	if (new.fd_in < 0)// || new.fd_out < 0)//ils sont initialises a 0 donc ok
+		exit_error(tab_cmds, args, i + 1, 1);//i + 1 car on prend la commande en cours egalement
 	return (new);
 }
 
-// t_cmd	*fill_cmd(t_cmd **tab_cmds, t_cmd *cmds, t_args *args, int i)
-// {
-// 	t_cmd	*tmp;
+int	wait_children(t_cmd *tab_cmds, int nb_cmd)//a verfier
+{
+	int	i;
 
-// 	if (*tab_cmds)
-// 		tmp = ft_lstlast((t_list*)(*tab_cmds));
-// 	else
-// 		tmp = NULL;
-// 	cmds->cmd_nb = i;
-// 	cmds->cmd = args->av[i + 2 + args->heredoc];
-// 	cmds->cmd_split = ft_split(cmds->cmd, ' ');
-// 	cmds->path = get_path(cmds->cmd_split[0], args->env);
-// 	if (!cmds->cmd_nb && !(args->heredoc))
-// 		cmds->fd_in = open_file(args->av[1], "in", args->heredoc);
-// 	else if (!cmds->cmd_nb)//sous entendu on a here doc et on est a la premiere cmd
-// 		cmds->fd_in = 0;//a voir
-// 	else
-// 		cmds->fd_in = tmp->fd_out;//jsp si ca sera disponible au moment ou on appelle la fonction, sinon faire = -1 pour l'initialisation
-// 	if (i == args->nb_cmd)
-// 		cmds->fd_out = open_file(args->av[args->nb_cmd + 2 + args->heredoc], "out", args->heredoc);
-// 	else
-// 		cmds->fd_out = -1;
-// 	cmds->pid = -1;
-// 	cmds->exit_status = -1;
-// 	ft_lstadd_back(tab_cmds, cmds);
-// 	return (cmds);
-// }
+	i = 0;
+	while (i < nb_cmd)
+	{
+		waitpid(tab_cmds[i].pid, &tab_cmds[i].exit_status, 0);
+		if (WIFEXITED(tab_cmds[i].exit_status) != 0 && WEXITSTATUS(tab_cmds[i].exit_status) != 0)
+		{
+			ft_putstr_fd("cmd nb ", 2);
+			ft_putnbr_fd(i, 2);
+			ft_putstr_fd(" exit code : ", 2);
+			ft_putnbr_fd(WEXITSTATUS(tab_cmds[i].exit_status), 2);
+			ft_putchar_fd('\n', 2);
+		}
+		i++;
+	}
+	return (0);
+}

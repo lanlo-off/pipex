@@ -53,7 +53,7 @@ SRCS_A += gnl/get_next_line.c\
 	gnl/get_next_line_utils.c
 
 # Other functions
-SRCS_A += other/ft_free_tab.c\
+SRCS_A += other/free_tab_str.c\
 	other/ft_strcmp.c
 
 SRC_DIR	= .
