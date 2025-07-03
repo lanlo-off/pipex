@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 17:17:20 by llechert          #+#    #+#             */
-/*   Updated: 2025/06/18 16:47:47 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/03 11:09:15 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ int		ft_strcmp(char *s1, char *s2);
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 4096
 # endif
+
 char	*get_next_line(int fd);
 void	add_new_element(t_list	**list, char *buf);
 int		find_newline(t_list *list);

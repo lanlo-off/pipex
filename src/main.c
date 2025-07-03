@@ -5,124 +5,103 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/13 11:23:30 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/02 16:51:49 by llechert         ###   ########.fr       */
+/*   Created: 2025/07/03 09:23:44 by llechert          #+#    #+#             */
+/*   Updated: 2025/07/03 11:23:24 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-// int	main(int ac, char **av, char **envp)
-// {
-// 	int	i;
-// 	int	fd_in;
-// 	int	fd_out;
-// 	int	prev_fd;
-	
-// 	if (ac < 5)
-// 		return (ft_putstr_fd("Not enough arguments!\n", 1), 0);
-// 	if (is_here_doc(av[1]))
-// 	{
-// 		fd_out = open_file(av[ac - 1], "out", 1);
-// 		// do_here_doc(av, envp, fd_out);
-// 		// prev_fd = do_first_cmd(av, envp, 3, 0)
-// 	}
-// 	else
-// 	{
-// 		fd_in = open_file(av[1], "in", 0);
-// 		fd_out = open_file(av[ac - 1], "out", 0);
-// 		prev_fd = do_first_cmd(av, envp, 2, fd_in);//possible de mutualiser cette ligne ainsi que fd_in = dans 
-// 		//l'indentation principale en disant opne_file(here_doc = 1) renvoie fd_in = 0
-// 	}
-// 	i = 3 + is_here_doc(av[1]);//3 + hd car premiere commande deja effectuee au dessus ou dans do_here_doc
-// 	while (i < ac - 2)
-// 		prev_fd = process_child(av, envp, i++, prev_fd);
-// 	do_last_cmd(av[ac - 2], envp, prev_fd, fd_out);
-// 	close_fds(fd_in, fd_out);//a mon avis cette fonction pue la merde
-// 	wait_children(ac - 2 - is_here_doc(av[1]));
-// 	return (0);
-// }
-
-int	main(int ac, char **av, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	int	i;
-	int	here_doc;
-	int	fd_in;
-	int	fd_out;
-	int	prev_fd;
+	t_args	*args;
+	t_cmd	**tab_cmds;
 	
-	if (ac < 5)
+	if (argc < 5)
 		return (ft_putstr_fd("Not enough arguments!\n", 1), 0);
-	here_doc = is_here_doc(av[1]);
-	fd_in = open_file(av[1], "in", here_doc);
-	fd_out = open_file(av[ac - 1], "out", here_doc);
-	if (here_doc)
-		prev_fd = do_here_doc(av, envp, fd_out);
-	else
-		prev_fd = do_first_cmd(av, envp, 2, fd_in);
-	i = 3 + here_doc;//3 + hd car premiere commande deja effectuee au dessus ou dans do_here_doc
-	while (i < ac - 2)
-		prev_fd = process_child(av, envp, i++, prev_fd);
-	do_last_cmd(av[ac - 2], envp, prev_fd, fd_out);
-	close_fds(fd_in, fd_out);
-	wait_children(ac - 2 - here_doc);
-	return (0);
+	args = ft_calloc(1, sizeof(t_args));
+	if (!args)
+		return (1);//bon code de sortie ??
+	fill_args(args, argc, argv, envp);
+	tab_cmds = init_cmds(args);
+	if (!tab_cmds)
+		return (1);
 }
 
-int	is_here_doc(char *str)
+void	fill_args(t_args *args, int argc, char **argv, char **envp)
 {
-	return (ft_strcmp(str, "here_doc") == 0);
+	args->heredoc = (ft_strcmp(argv[1], "here_doc") == 0);
+	args->nb_cmd = argc - 3 - args->heredoc;
+	args->av = argv;
+	args->env = envp;
 }
 
-void	wait_children(int nb_cmd)
+t_cmd	**init_cmds(t_args *args)
 {
-	int	j;
+	t_cmd	**tab_cmds;
+	t_cmd	*tmp;
+	int		i;
 
-	j = 0;
-	while (j < nb_cmd)
+	i = 0;
+	tab_cmds = ft_calloc(args->nb_cmd ,sizeof(t_cmd));
+	if (!tab_cmds)
+		return (NULL);
+	(*tab_cmds) = fill_cmd(tab_cmds, *tab_cmds, args, i);
+	while (i < args->nb_cmd)
 	{
-		wait(NULL);
-		j++;
+		tmp = *tab_cmds;
+		i++;
 	}
 }
 
-int	do_here_doc(char **av, char **envp, int fd_out)
+t_cmd	*fill_cmd(t_cmd **tab_cmds, t_args *args, int i)
 {
-	int		pipefd[2];
-	pid_t	pid;
-	char	*line;
-	char	*limiter;
-	int		lim_len;
+	t_cmd	*new;
 
-	line = NULL;
-	limiter = av[2];
-	lim_len = ft_strlen(limiter);
-	if (pipe(pipefd) == -1)
-		return (ft_putstr_fd("Could not create pipe!\n", 2), -1);
-	pid = fork();
-	if (pid == -1)
-		return (ft_putstr_fd("Could not fork!\n", 2), -1);
-	if (pid == 0)
-	{
-		close(pipefd[0]);
-		while (1)//la dedans caser un gnl(-42) pour eviter un segfault ?
-		{
-			ft_putstr_fd("heredoc> ", 1);
-			line = get_next_line(0);
-			if (!line)
-				break;
-			if (!ft_strncmp(line, limiter, lim_len) && line[lim_len] == '\n')
-			{
-				free(line);
-				break;
-			}
-			ft_putstr_fd(line, pipefd[1]);
-			free(line);
-		}
-		close(pipefd[1]);
-		exit(0);
-	}
+	new->cmd_nb = i;
+	new->cmd = args->av[i + 2 + args->heredoc];
+	new->cmd_split = ft_split(new->cmd, ' ');
+	new->path = get_path(new->cmd_split[0], args->env);
+	if (!new->cmd_nb && !(args->heredoc))
+		new->fd_in = open_file(args->av[1], "in", args->heredoc);
+	else if (!new->cmd_nb)//sous entendu on a here doc et on est a la premiere cmd
+		new->fd_in = 0;//a voir
 	else
-		close(pipefd[1]);
-	return (do_first_cmd(av, envp, 3, pipefd[0]));
+		new->fd_in = -1;//jsp si ca sera disponible au moment ou on appelle la fonction donc = -1 pour l'initialisation
+	if (i == args->nb_cmd)
+		new->fd_out = open_file(args->av[args->nb_cmd + 2 + args->heredoc], "out", args->heredoc);
+	else
+		new->fd_out = -1;
+	new->pid = -1;
+	new->exit_status = -1;
+	ft_lstadd_back(tab_cmds, new);
+	return (new);
 }
+
+// t_cmd	*fill_cmd(t_cmd **tab_cmds, t_cmd *cmds, t_args *args, int i)
+// {
+// 	t_cmd	*tmp;
+
+// 	if (*tab_cmds)
+// 		tmp = ft_lstlast((t_list*)(*tab_cmds));
+// 	else
+// 		tmp = NULL;
+// 	cmds->cmd_nb = i;
+// 	cmds->cmd = args->av[i + 2 + args->heredoc];
+// 	cmds->cmd_split = ft_split(cmds->cmd, ' ');
+// 	cmds->path = get_path(cmds->cmd_split[0], args->env);
+// 	if (!cmds->cmd_nb && !(args->heredoc))
+// 		cmds->fd_in = open_file(args->av[1], "in", args->heredoc);
+// 	else if (!cmds->cmd_nb)//sous entendu on a here doc et on est a la premiere cmd
+// 		cmds->fd_in = 0;//a voir
+// 	else
+// 		cmds->fd_in = tmp->fd_out;//jsp si ca sera disponible au moment ou on appelle la fonction, sinon faire = -1 pour l'initialisation
+// 	if (i == args->nb_cmd)
+// 		cmds->fd_out = open_file(args->av[args->nb_cmd + 2 + args->heredoc], "out", args->heredoc);
+// 	else
+// 		cmds->fd_out = -1;
+// 	cmds->pid = -1;
+// 	cmds->exit_status = -1;
+// 	ft_lstadd_back(tab_cmds, cmds);
+// 	return (cmds);
+// }

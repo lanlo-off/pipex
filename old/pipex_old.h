@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:31:58 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 10:57:46 by llechert         ###   ########.fr       */
+/*   Updated: 2025/06/20 11:48:30 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,29 +20,8 @@
 # include <sys/wait.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-# include <fcntl.h>
+# include <fcntl.h>  
 # include <stdlib.h>
-
-typedef struct s_cmd
-{
-	int				cmd_nb;
-	char			*cmd;
-	char			**cmd_split;
-	char			*path;
-	int				fd_in;
-	int				fd_out;
-	pid_t			pid;
-	int				exit_status;
-	struct s_args	*next;
-}	t_cmd;
-
-typedef struct s_args
-{
-	int		nb_cmd;
-	char	**av;
-	char	**env;
-	int		heredoc;
-}	t_args;
 
 /*main.c*/
 int		is_here_doc(char *str);
