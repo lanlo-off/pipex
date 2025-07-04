@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:31:58 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 19:00:25 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/04 14:44:45 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct s_args
 /*main.c*/
 void	fill_args(t_args *args, int argc, char **argv, char **envp);
 t_cmd	*init_cmds(t_args *args);
-t_cmd	fill_cmd(t_cmd *tab_cmds, t_args *args, int i);
+void	fill_cmd(t_cmd *tab_cmds, t_args *args, int i);
 int		wait_children(t_cmd *tab_cmds, int nb_cmd);
 
 /*pipex.c*/

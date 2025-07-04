@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 17:43:56 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:34:18 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ char	**split_path(char **envp)
 		while (envp[i][j] && envp[i][j] != '=')
 			j++;
 		sub = ft_substr(envp[i], 0, j);
+		if (!sub)
+			return (NULL);
 		if (ft_strncmp(sub, "PATH", 5) == 0)
 		{
 			free(sub);
@@ -46,6 +48,8 @@ char	*get_path(char *cmd, char **envp)
 	char	*full_path;
 
 	all_path = split_path(envp);
+	if (!all_path)
+			return (NULL);
 	i = 0;
 	while (all_path[i])
 	{

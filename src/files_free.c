@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   files_free.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 16:39:09 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 19:03:08 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/04 13:49:27 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ void	close_fds(int fd_in, int fd_out)
 		close(fd_out);
 }
 
-void	free_cmds(t_cmd *tab_cmds, int nb_cmd)
+void	free_cmds(t_cmd *tab_cmds, int tab_size)
 {
 	int	i;
 
 	i = 0;
-	while (i < nb_cmd)
+	while (i < tab_size)
 	{
 		if (tab_cmds[i].path && tab_cmds[i].path != tab_cmds[i].cmd_split[0])
 			free(tab_cmds[i].path);// seulement si path a été malloc séparément de cmd_split
@@ -66,9 +66,9 @@ void	free_cmds(t_cmd *tab_cmds, int nb_cmd)
 	free(tab_cmds);
 }
 
-void	exit_error(t_cmd *tab_cmds, t_args *args, int nb_cmd, int error)
+void	exit_error(t_cmd *tab_cmds, t_args *args, int tab_size, int error)
 {
-	free_cmds(tab_cmds, nb_cmd);
+	free_cmds(tab_cmds, tab_size);
 	free(args);
 	exit(error);
 }

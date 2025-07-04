@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
+/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 13:26:08 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/03 19:16:41 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/04 15:15:56 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ void	pipex(t_cmd *tab_cmds, t_args *args)
 	while (i < args->nb_cmd)
 	{
 		renew_pipe(tab_cmds, i, pipefd, args->nb_cmd);
-		if (i == args->nb_cmd - 1)
-		{
-			tab_cmds[i].fd_out = open_outfile(args->av[args->nb_cmd + 2 + args->heredoc], args->heredoc);
-			if (tab_cmds[i].fd_out < 1)
-				exit_error(tab_cmds, args, i + 1, 1);
-		}
+		// if (i == args->nb_cmd - 1)
+		// {
+		// 	tab_cmds[i].fd_out = open_outfile(args->av[args->nb_cmd + 2 + args->heredoc], args->heredoc);
+		// 	if (tab_cmds[i].fd_out < 1)
+		// 		exit_error(tab_cmds, args, i + 1, 1);
+		// }
 		do_cmd(tab_cmds, i, pipefd, args);
 		i++;
 	}
@@ -61,6 +61,8 @@ void	do_cmd(t_cmd *tab_cmds, int i, int pipefd[2], t_args *args)
 		return (ft_putstr_fd("Could not fork!\n", 2));
 	else if (tab_cmds[i].pid == 0)
 	{
+		if (i < args->nb_cmd - 1)
+			close(tab_cmds[args->nb_cmd - 1].fd_out);
 		dup2(tab_cmds[i].fd_in, STDIN_FILENO);
 		dup2(tab_cmds[i].fd_out, STDOUT_FILENO);//pipe cote ecriture = fd_out
 		close(pipefd[0]);
