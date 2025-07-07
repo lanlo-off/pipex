@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 09:23:44 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/04 16:18:51 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:14:24 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,23 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_args	*args;
 	t_cmd	*tab_cmds;
+	int		status;
 	
-	if (argc < 5)
-		return (ft_putstr_fd("Not enough arguments!\n", 1), 0);
+	if (argc < 5 || (ft_strcmp(argv[1], "here_doc") == 0 && argc < 6))
+		return (ft_putstr_fd("Not enough arguments!\n", 1), 1);
 	args = ft_calloc(1, sizeof(t_args));
 	if (!args)
-		return (1);//bon code de sortie ??
+		return (1);
 	fill_args(args, argc, argv, envp);
 	tab_cmds = init_cmds(args);
 	if (!tab_cmds)
 		return (1);
 	pipex(tab_cmds, args);
 	close_fds(tab_cmds[0].fd_in, tab_cmds[args->nb_cmd - 1].fd_out);
-	wait_children(tab_cmds, args->nb_cmd);
+	status = wait_children(tab_cmds, args->nb_cmd);
 	free_cmds(tab_cmds, args->nb_cmd);
 	free(args);
-	return (WEXITSTATUS(tab_cmds[args->nb_cmd - 1].exit_status));
+	return (status);
 }
 
 void	fill_args(t_args *args, int argc, char **argv, char **envp)
@@ -79,23 +80,27 @@ void	fill_cmd(t_cmd *tab_cmds, t_args *args, int i)
 	return ;
 }
 
-int	wait_children(t_cmd *tab_cmds, int nb_cmd)//a verfier
+int	wait_children(t_cmd *tab_cmds, int nb_cmd)
 {
 	int	i;
+	int	code;
 
 	i = 0;
 	while (i < nb_cmd)
 	{
 		waitpid(tab_cmds[i].pid, &tab_cmds[i].exit_status, 0);//stocke le code de sortie encode dans exit status
-		if (WIFEXITED(tab_cmds[i].exit_status) != 0 && WEXITSTATUS(tab_cmds[i].exit_status) != 0)
-		{
-			ft_putstr_fd("cmd nb ", 2);
-			ft_putnbr_fd(i, 2);
-			ft_putstr_fd(" exit code : ", 2);
-			ft_putnbr_fd(WEXITSTATUS(tab_cmds[i].exit_status), 2);//imprime le code decode (le nombre associe au code de sortie)
-			ft_putchar_fd('\n', 2);
-		}
+		// ft_putstr_fd("cmd nb ", 2);
+		// ft_putnbr_fd(i, 2);
+		// ft_putstr_fd(" exit code : ", 2);
+		// ft_putnbr_fd(WEXITSTATUS(tab_cmds[i].exit_status), 2);//imprime le code decode (le nombre associe au code de sortie)
+		// ft_putchar_fd('\n', 2);
 		i++;
 	}
-	return (0);
+	code = tab_cmds[i - 1].exit_status;
+	if (WIFEXITED(code))
+		return (WEXITSTATUS(code));
+	else if (WIFSIGNALED(code))
+		return (128 + WTERMSIG(code));
+	else
+		return (1);
 }

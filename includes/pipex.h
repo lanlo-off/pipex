@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:31:58 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/04 14:44:45 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 12:22:02 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int		wait_children(t_cmd *tab_cmds, int nb_cmd);
 
 /*pipex.c*/
 void	pipex(t_cmd *tab_cmds, t_args *args);
-void	renew_pipe(t_cmd *tab_cmds, int i, int pipefd[2], int nb_cmd);
+void	renew_pipe(t_cmd *tab_cmds, int i, int pipefd[2], t_args *args);
 void	do_cmd(t_cmd *tab_cmds, int i, int pipefd[2], t_args *args);
 void	exec_cmd(char **cmd_split, char *path, char **envp);
 
