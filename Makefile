@@ -1,7 +1,9 @@
 SRCS = src/main.c\
 	src/pipex.c\
 	src/utils.c\
-	src/files_free.c
+	src/files.c\
+	src/free.c\
+	src/here_doc.c
 
 OBJS := $(SRCS:.c=.o)
 
@@ -21,18 +23,11 @@ HEADER_BONUS = includes/pipex_bonus.h
 
 CC = cc
 
-AR = ar rcs
-
 CFLAGS = -Wall -Wextra -Werror -g3
 
-TEST_FILES = test.c\
-	src/pipex.c\
-	src/utils.c\
-	src/files_free.c
-
-TEST_NAME = pipex_test
-
-ARGS = infile.txt "grep Hello" "wc -l" outfile.txt
+ARGS = infile.txt "cat -e" "wc -l" outfile.txt
+ARGS2 = infile.txt "cat -e" "cat -e" outfile.txt
+ARGS_ERROR = infile.txt "cat -e" "greknvjk" outfile.txt
 
 all: $(NAME)
 
@@ -58,8 +53,5 @@ fclean: clean
 
 re: fclean all
 
-test: all
-	$(CC) $(CFLAGS) $(TEST_FILES) -I./includes -I./libft -L./libft -lft -o $(TEST_NAME) && ./$(TEST_NAME)
-
 leakcheck: all
-	valgrind --trace-children=yes ./pipex $(ARGS)
+	valgrind --leak-check=full --trace-children=yes --track-fds=yes ./pipex $(ARGS)

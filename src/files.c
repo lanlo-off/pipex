@@ -1,28 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   files_free.c                                       :+:      :+:    :+:   */
+/*   files.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 16:39:09 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/04 13:49:27 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 16:18:37 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-int	open_infile(char *file, int	here_doc)
+int	open_infile(char *file)
 {
 	int	fd;
 
 	fd = -1;
-	if (here_doc == 1)
-		return (0);
-	else
-		fd = open(file, O_RDONLY);
+	fd = open(file, O_RDONLY);
 	if (fd < 0)
-		ft_putstr_fd("Could not read infile!\n", 2);//free apres le retour de la fonction
+		ft_putstr_fd("Could not read infile!\n", 2);
 	return (fd);
 }
 
@@ -36,7 +33,7 @@ int	open_outfile(char *file, int here_doc)
 	else
 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0777);
 	if (fd < 0)
-		ft_putstr_fd("Could not open outfile!\n", 2);//free apres le retour de la fonction
+		ft_putstr_fd("Could not open outfile!\n", 2);
 	return (fd);
 }
 
@@ -48,27 +45,4 @@ void	close_fds(int fd_in, int fd_out)
 	if (fd_out > 0 && fd_out != STDIN_FILENO && fd_out != STDOUT_FILENO
 		&& fd_out != STDERR_FILENO)
 		close(fd_out);
-}
-
-void	free_cmds(t_cmd *tab_cmds, int tab_size)
-{
-	int	i;
-
-	i = 0;
-	while (i < tab_size)
-	{
-		if (tab_cmds[i].path && tab_cmds[i].path != tab_cmds[i].cmd_split[0])
-			free(tab_cmds[i].path);// seulement si path a été malloc séparément de cmd_split
-		if (tab_cmds[i].cmd_split)
-			free_tab_str(tab_cmds[i].cmd_split);
-		i++;
-	}
-	free(tab_cmds);
-}
-
-void	exit_error(t_cmd *tab_cmds, t_args *args, int tab_size, int error)
-{
-	free_cmds(tab_cmds, tab_size);
-	free(args);
-	exit(error);
 }

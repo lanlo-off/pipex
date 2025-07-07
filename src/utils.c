@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llechert <llechert@student.42.fr>          +#+  +:+       +#+        */
+/*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 14:46:32 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/04 15:34:18 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 15:21:57 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*get_path(char *cmd, char **envp)
 
 	all_path = split_path(envp);
 	if (!all_path)
-			return (NULL);
+		return (NULL);
 	i = 0;
 	while (all_path[i])
 	{
@@ -68,3 +68,8 @@ char	*get_path(char *cmd, char **envp)
 	return (NULL);
 }
 
+void	dup2_fds(int fd_in, int fd_out)
+{
+	dup2(fd_in, STDIN_FILENO);//est-ce que ca marche sur la premiere ecriture de heredoc ca ?
+	dup2(fd_out, STDOUT_FILENO);
+}
