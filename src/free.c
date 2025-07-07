@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 14:30:44 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/07 14:31:29 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:49:31 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ void	free_cmds(t_cmd *tab_cmds, int tab_size)
 	i = 0;
 	while (i < tab_size)
 	{
-		if (tab_cmds[i].path && tab_cmds[i].path_to_free)
-			free(tab_cmds[i].path);
+		free_path(tab_cmds[i].path, tab_cmds[i].path_to_free);
 		if (tab_cmds[i].cmd_split)
 			free_tab_str(tab_cmds[i].cmd_split);
 		i++;

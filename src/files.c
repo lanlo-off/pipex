@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 16:39:09 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/07 16:18:37 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:35:18 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ int	open_outfile(char *file, int here_doc)
 
 void	close_fds(int fd_in, int fd_out)
 {
-	if (fd_in > 0 && fd_in != STDIN_FILENO && fd_in != STDOUT_FILENO
+	if (fd_in >= 0 && fd_in != STDIN_FILENO && fd_in != STDOUT_FILENO
 		&& fd_in != STDERR_FILENO)
 		close(fd_in);
-	if (fd_out > 0 && fd_out != STDIN_FILENO && fd_out != STDOUT_FILENO
+	if (fd_out >= 0 && fd_out != STDIN_FILENO && fd_out != STDOUT_FILENO
 		&& fd_out != STDERR_FILENO)
 		close(fd_out);
 }

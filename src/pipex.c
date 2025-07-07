@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 13:26:08 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/07 16:19:20 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:48:24 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ void	do_cmd(t_cmd *tab_cmds, int i, int pipefd[2], t_args *args)
 			close(tab_cmds[args->nb_cmd - 1].fd_out);
 		dup2_fds(tab_cmds[i].fd_in, tab_cmds[i].fd_out);
 		close_fds(pipefd[0], pipefd[1]);
-		if (tab_cmds[i].fd_in != STDIN_FILENO)
+		if (tab_cmds[i].fd_in >= 0 && tab_cmds[i].fd_in != STDIN_FILENO)
 			close(tab_cmds[i].fd_in);
-		if (tab_cmds[i].fd_out != STDOUT_FILENO)
+		if (tab_cmds[i].fd_out >= 0 && tab_cmds[i].fd_out != STDOUT_FILENO)
 			close(tab_cmds[i].fd_out);
 		exec_cmd(tab_cmds, i, args);
 	}
@@ -67,7 +67,7 @@ void	do_cmd(t_cmd *tab_cmds, int i, int pipefd[2], t_args *args)
 		close(pipefd[1]);
 		if (i > 0 && tab_cmds[i - 1].fd_out != STDOUT_FILENO)
 			close(tab_cmds[i - 1].fd_out);
-		if (tab_cmds[i].fd_in != STDIN_FILENO)
+		if (tab_cmds[i].fd_in >= 0 && tab_cmds[i].fd_in != STDIN_FILENO)
 			close(tab_cmds[i].fd_in);
 		if (i < args->nb_cmd - 1)
 			tab_cmds[i].fd_out = pipefd[0];
@@ -91,9 +91,8 @@ void	exec_cmd(t_cmd *tab_cmds, int i, t_args *args)
 		perror("path not found");
 		exit_error(tab_cmds, args, args->nb_cmd, 127);
 	}
-	execve(tab_cmds[i].path, tab_cmds[i].cmd_split, args->env);
+	if (tab_cmds[i].fd_in >= 0 && tab_cmds[i].fd_out >= 0)
+		execve(tab_cmds[i].path, tab_cmds[i].cmd_split, args->env);
 	perror("execve");
-	free_path(tab_cmds[i].path, tab_cmds[i].path_to_free);
-	free_tab_str(tab_cmds[i].cmd_split);
-	exit(126);
+	exit_error(tab_cmds, args, args->nb_cmd, 127);
 }

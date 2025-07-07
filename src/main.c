@@ -6,7 +6,7 @@
 /*   By: llechert <llechert@42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 09:23:44 by llechert          #+#    #+#             */
-/*   Updated: 2025/07/07 16:37:35 by llechert         ###   ########.fr       */
+/*   Updated: 2025/07/07 17:37:38 by llechert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,17 @@ void	fill_cmd(t_cmd *tab_cmds, t_args *args, int i)
 		else
 			tab_cmds[i].path = tab_cmds[i].cmd_split[0];
 	}
-	tab_cmds[i].fd_in = 0;
-	tab_cmds[i].fd_out = 0;
+	tab_cmds[i].fd_in = -1;
+	tab_cmds[i].fd_out = -1;
 	if (!i && !args->hd)
 		tab_cmds[i].fd_in = open_infile(args->av[1]);
 	else if (i == args->nb_cmd - 1)
 		tab_cmds[i].fd_out = open_outfile(args->av[args->ac - 1], args->hd);
-	if (tab_cmds[i].fd_in < 0 || tab_cmds[i].fd_out < 0)
-	{
-		close_fds(tab_cmds[0].fd_in, tab_cmds[i].fd_out);
-		exit_error(tab_cmds, args, i + 1, 1);
-	}
+	// if (tab_cmds[i].fd_in < 0 || tab_cmds[i].fd_out < 0)
+	// {
+	// 	close_fds(tab_cmds[0].fd_in, tab_cmds[i].fd_out);
+	// 	exit_error(tab_cmds, args, i + 1, 1);
+	// }
 }
 
 int	wait_children(t_cmd *tab_cmds, int nb_cmd)
